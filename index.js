@@ -133,16 +133,19 @@ module.exports = function (content, file, conf) {
         if (item.content) {
             var styleFileName = file.dirname + "/" + file.filename + '-vue-style-' + index + "." + item.lang;
 
+            //新建一个对应拓展名的文件，写入内容
             fis.util.write(styleFileName, item.content, 'utf-8');
 
             var styleFile = fis.file.wrap(styleFileName);
             var styleContent;
 
+            //用 fis 来 compile
             styleFile.cache = file.cache;
             styleFile.isCssLike = true;
             styleFile.isMod = true;
             fis.compile(styleFile);
 
+            //生成 seajs-config 与该项目的 seajs-config 合并
             var seajs_config = fis.file(fis.project.getProjectPath(), 'static', 'seajs-config.js');
 
             var originalContent = '';
@@ -154,6 +157,7 @@ module.exports = function (content, file, conf) {
             var release = styleFile.release.substring(1);
 
             if (seajs_config.exists()) {
+                //如果该文件存在
                 originalContent = seajs_config.getContent();
 
                 originalContent = originalContent.replace(/([\r\n])/g, '');
@@ -167,26 +171,14 @@ module.exports = function (content, file, conf) {
                     fis.util.write(seajs_config.origin, 'seajs.config(' + JSON.stringify(conf, null, 4) + ');', 'utf-8');
                 }
             } else {
+                //不存在就生成一个
                 conf.map.push([styleFile.getId(), release]);
 
                 fis.util.write(seajs_config.origin, 'seajs.config(' + JSON.stringify(conf, null, 4) + ');', 'utf-8')
             }
-            // styleContent = file.getContent();
-            // css也采用片段编译，更好的支持less、sass等其他语言
-            // styleContent = fis.compile.partial(item.content, file, {
-            //   ext: item.lang,
-            //   isCssLike: true
-            // });
 
-
-            // styleFile.setContent(styleContent);
-            // fis.compile.process(styleFile);
-            // styleFile.links.forEach(function(derived) {
-            //   file.addLink(derived);
-            // });
-            // file.derived.push(styleFile);
+            //最后将style 文件依赖添加进去
             file.addRequire(styleFile.getId());
-            // scriptStr += '\nrequire("./'+styleFile.filename+'.less");\n';
             fis.util.del(styleFileName);
         }
     });
