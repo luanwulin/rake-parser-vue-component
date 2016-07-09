@@ -27,58 +27,15 @@ parser vue component for fisp
 
 ## 安装配置
 
-安装：`npm install fis3-parser-vue-component --save-dev`。
+安装：`npm install rake-parser-vue-component --save-dev`。
 
 配置：
 ```javascript:;
-// vue组件本身配置
-fis.match('src/vue/**.vue', {
-  isMod: true,
-  rExt: 'js',
-  useSameNameRequire: true,
-  parser: fis.plugin('vue-component', {
-    cssScopeFlag: 'vuec'
-  })
+fis.config.set('modules.parser.vue', 'vue-component');
+fis.config.set('settings.parser.vue-component', {
+    // my-sass 的配置
 });
-
-// vue组件中产出的css处理。
-fis.match('src/(vue/**.css)', {
-  release: 'css/$1'
-});
-
-// vue组件中的less片段处理
-fis.match('src/vue/**.vue:less', {
-  rExt: 'css',
-  parser: fis.plugin('less')
-});
-
-// vue组件中的sass片段处理
-fis.match('src/vue/**.vue:scss', {
-  rExt: 'css',
-  parser: fis.plugin('node-sass')
-});
-
-// vue组件中的jade模板片段处理
-fis.match('src/**.vue:jade', {
-  rExt: 'css',
-  parser: fis.plugin('less')
-});
-
-// vue组件中js片段处理。
-fis.match('src/**.vue:js', {
-  parser: [
-    fis.plugin('babel-6.x', {
-      presets: ['es2015-loose', 'react', 'stage-3']
-    }),
-    fis.plugin('translate-es3ify', null, 'append')
-  ]
-})
-
-// vue组件中的产出coffee片段处理
-fis.match('src/**.vue:coffee', {
-  rExt: 'html',
-  parser: fis.plugin('jade')
-})
+fis.config.set('roadmap.ext.vue', 'js'); // 由于 scss 文件最终会编译成 css，设置最终产出文件后缀为 css
 ```
 
 ## css scoped支持
