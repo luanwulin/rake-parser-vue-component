@@ -20,10 +20,10 @@ function getAttribute(node, name) {
     }
 }
 
-function isArray(o){
-  return Object.prototype.toString.call(o) === "[object Array]";
+function isArray(o) {
+    return Object.prototype.toString.call(o) === "[object Array]";
 }
-function isObject(o){
+function isObject(o) {
     return Object.prototype.toString.call(o) === "[object Object]";
 }
 // exports
@@ -37,7 +37,7 @@ module.exports = function (content, file, conf) {
 
     // configs
     configs = objectAssign({
-        cssScopedFlag: 'vuec',
+        cssScopedFlag: 'vuec'
     }, conf);
 
     // 兼容content为buffer的情况
@@ -112,15 +112,11 @@ module.exports = function (content, file, conf) {
 
     // template
     if (output['template'].length) {
-        // templateContent = fis.compile.partial(output['template'][0].content, file, {
-        //   ext: output['template'][0].lang,
-        //   isHtmlLike: true
-        // });
         validateTemplate(output['template'][0].content).forEach(function (msg) {
             console.log(msg)
-        })
+        });
 
-        scriptStr += '\nvar _vueTemplateString = ' + JSON.stringify(output['template'][0].content) + ';\n'
+        scriptStr += '\nvar _vueTemplateString = ' + JSON.stringify(output['template'][0].content) + ';\n';
         scriptStr += '\nmodule && module.exports && (module.exports.template = _vueTemplateString);\n';
         scriptStr += '\nexports && exports.default && (exports.default.template = _vueTemplateString);\n';
     } else {
@@ -161,13 +157,14 @@ module.exports = function (content, file, conf) {
                 originalContent = seajs_config.getContent();
 
                 originalContent = originalContent.replace(/([\r\n])/g, '');
-                let mapJson = originalContent.match(/(\{.*\})/g);
-                mapJson = mapJson ? JSON.parse(mapJson[0]) : mapJson;
-
-                conf.map = isObject(mapJson) && mapJson.hasOwnProperty("map") && isArray(mapJson.map) ? mapJson.map : conf.map; 
-                conf.map.push([styleFile.getId(), release]);
-
                 if (!(originalContent.indexOf(release) > -1)) {
+
+                    let mapJson = originalContent.match(/(\{.*\})/g);
+                    mapJson = mapJson ? JSON.parse(mapJson[0]) : mapJson;
+
+                    conf.map = isObject(mapJson) && mapJson.hasOwnProperty("map") && isArray(mapJson.map) ? mapJson.map : conf.map;
+                    conf.map.push([styleFile.getId(), release]);
+
                     fis.util.write(seajs_config.origin, 'seajs.config(' + JSON.stringify(conf, null, 4) + ');', 'utf-8');
                 }
             } else {
@@ -177,7 +174,7 @@ module.exports = function (content, file, conf) {
                 fis.util.write(seajs_config.origin, 'seajs.config(' + JSON.stringify(conf, null, 4) + ');', 'utf-8')
             }
 
-            //最后将style 文件依赖添加进去
+            //最后将style 文件依赖添加进去,删除生成的 style 文件
             file.addRequire(styleFile.getId());
             fis.util.del(styleFileName);
         }
