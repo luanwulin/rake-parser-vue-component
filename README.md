@@ -7,11 +7,11 @@ parser vue component for fisp
 
 参考[vue-loader](https://github.com/vuejs/vue-loader)源码，结合fisp的编译特性而编写,下面是parser阶段的主要过程：
 
-1. 解析vue文件，找到其中的`style`,'template','script'标签。
+1. 解析vue文件，找到其中的`style`,`template`,`script`标签。
 
-2. 每一个`style`标签创建一个对应的文件，后缀为`lang`属性指定，默认`css`，你可以指定`less`或其它的后缀。对创建文件，一样会进行fisp的编译流程（属性`lang`的值决定该文件怎么编译），并加入到当前文件的依赖中，编译完成后删除该文件。
+2. 每一个`style`标签创建一个对应的文件，后缀为`lang`属性指定，默认`css`，你可以指定`less`或其它的后缀。创建的文件，一样会进行fisp的编译流程（属性`lang`的值决定该文件怎么编译），并加入到当前文件的依赖中，编译完成后删除该文件。
 
-3. `template`标签的内容为Vue组件的模板，`template`标签同样有`lang`属性，默认`html`，会进行html特性处理，模板的内容最终会输出到`module.exports.template`中。
+3. `template`标签的内容为Vue组件的模板，`template`标签同样有`lang`属性，默认`html`(暂时只支持`html`，`jade`等模板语言之后加入)，会进行html特性处理，模板的内容最终会输出到`module.exports.template`中。
 
 4. `script`标签为文件最后输出的内容，支持`lang`属性。
 
