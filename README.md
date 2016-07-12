@@ -9,7 +9,7 @@ parser vue component for fisp
 
 1. 解析vue文件，找到其中的`style`,'template','script'标签。
 
-2. 每一个`style`标签创建一个对应的虚拟文件，后缀为`lang`属性指定，默认`css`，你可以指定`less`或其它的后缀。对创建虚拟文件，一样会进行fis3的编译流程（属性`lang`的值决定该文件怎么编译），并加入当前文件的依赖。
+2. 每一个`style`标签创建一个对应的文件，后缀为`lang`属性指定，默认`css`，你可以指定`less`或其它的后缀。对创建文件，一样会进行fisp的编译流程（属性`lang`的值决定该文件怎么编译），并加入到当前文件的依赖中，编译完成后删除该文件。
 
 3. `template`标签的内容为Vue组件的模板，`template`标签同样有`lang`属性，默认`html`，会进行html特性处理，模板的内容最终会输出到`module.exports.template`中。
 
@@ -21,7 +21,7 @@ parser vue component for fisp
 
 ## 注意
 
-- 组件中的样式、模板、脚本都会先进行片段处理（片段不产出），对应的配置应该为`fis.match('**.vue:lang', {})`的方式。
+- 组件中的样式、模板、脚本都会先进行片段处理，会使用对应的`parser`进行编译处理。
 - 每一个style标签会对应产出一个css文件，与vue组件同目录。
 - script标签内容编译后，为组件的最终产出内容。
 
@@ -33,9 +33,9 @@ parser vue component for fisp
 ```javascript:;
 fis.config.set('modules.parser.vue', 'vue-component');
 fis.config.set('settings.parser.vue-component', {
-    // my-sass 的配置
+    // 组件的配置
 });
-fis.config.set('roadmap.ext.vue', 'js'); // 由于 scss 文件最终会编译成 css，设置最终产出文件后缀为 css
+fis.config.set('roadmap.ext.vue', 'js'); 
 ```
 
 ## css scoped支持
@@ -58,13 +58,8 @@ fis.config.set('roadmap.ext.vue', 'js'); // 由于 scss 文件最终会编译成
 
 4. 配置：scoped标志默认为'vuec'，你可以自定义。
 ```js
-fis.match('src/**.vue', {
-  isMod: true,
-  rExt: 'js',
-  useSameNameRequire: true,
-  parser: fis.plugin('vue-component', {
-    cssScopedFlag: 'myCssScopedFlag'
-  })
+fis.config.set('settings.parser.vue-component', {  
+	cssScopedFlag: 'myCssScopedFlag'  
 });
 ```
 
@@ -76,6 +71,6 @@ fis.match('src/**.vue', {
 
 `npm install`
 
-`fis3 release`
+`rk release`
 
-`fis3 server start`
+`rk server start`

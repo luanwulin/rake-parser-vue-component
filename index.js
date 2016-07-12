@@ -29,7 +29,6 @@ function isObject(o) {
 // exports
 module.exports = function (content, file, conf) {
     file.isMod = true;
-    file.id = file.id.replace(/\.vue$/, '.js');
 
     var scriptStr = '';
     var templateFileName, templateFile, templateContent;
