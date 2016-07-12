@@ -1,6 +1,6 @@
 {
   "name": "rake-parser-vue-component",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "parser vue component",
   "main": "index.js",
   "keywords": [
