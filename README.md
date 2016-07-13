@@ -13,7 +13,7 @@ parser vue component for fisp
 
 3. `template`标签的内容为Vue组件的模板，`template`标签同样有`lang`属性，默认`html`(暂时只支持`html`，`jade`等模板语言之后加入)，会进行html特性处理，模板的内容最终会输出到`module.exports.template`中。
 
-4. `script`标签为文件最后输出的内容，支持`lang`属性。
+4. `script`标签为文件最后输出的内容，支持`lang`属性,支持es6语法。
 
 ## 组件编写规范
 

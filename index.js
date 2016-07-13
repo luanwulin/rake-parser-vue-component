@@ -104,6 +104,31 @@ module.exports = function (content, file, conf) {
     if (output['script'].length) {
         scriptStr = output['script'][0].content;
         jsLang = output['script'][0].lang;
+
+        switch (jsLang.toLowerCase()){
+            case "es6":
+                var es6FileName = file.dirname + "/" + file.filename + '-vue-es6.es6';
+
+                //新建一个对应拓展名的文件，写入内容
+                fis.util.write(es6FileName, scriptStr, 'utf-8');
+
+                var es6File = fis.file.wrap(es6FileName);
+
+                //用 fis 来 compile
+                es6File.cache = file.cache;
+                es6File.isJsLike = true;
+                es6File.isMod = false;
+                es6File.release = false;
+                es6File.useMap = false;
+
+                fis.compile(es6File);
+
+                scriptStr = es6File.getContent();
+                fis.util.del(es6FileName);
+                break;
+            default:
+                break;
+        }
     } else {
         scriptStr += 'module.exports = {}';
         jsLang = 'js';
