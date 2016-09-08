@@ -1,6 +1,6 @@
 {
   "name": "rake-parser-vue-component",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "parser vue component",
   "main": "index.js",
   "keywords": [
@@ -16,7 +16,6 @@
     "url": "https://github.com/luanwulin/rake-parser-vue-component.git"
   },
   "dependencies": {
-    "fis-parser-es6-babel": "^1.0.0",
     "de-indent": "^1.0.2",
     "object-assign": "^4.1.0",
     "parse5": "^2.1.5",
