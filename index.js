@@ -23,11 +23,12 @@ function getAttribute(node, name) {
 function isArray(o) {
     return Object.prototype.toString.call(o) === "[object Array]";
 }
+
 function isObject(o) {
     return Object.prototype.toString.call(o) === "[object Object]";
 }
 // exports
-module.exports = function (content, file, conf) {
+module.exports = function(content, file, conf) {
     file.isMod = true;
 
     var scriptStr = '';
@@ -58,7 +59,7 @@ module.exports = function (content, file, conf) {
         script: []
     };
 
-    fragment.childNodes.forEach(function (node) {
+    fragment.childNodes.forEach(function(node) {
         var type = node.tagName;
         var lang = getAttribute(node, 'lang');
         var src = getAttribute(node, 'src');
@@ -105,7 +106,7 @@ module.exports = function (content, file, conf) {
         scriptStr = output['script'][0].content;
         jsLang = output['script'][0].lang;
 
-        switch (jsLang.toLowerCase()){
+        switch (jsLang.toLowerCase()) {
             case "es6":
                 var es6FileName = file.dirname + "/" + file.filename + '-vue-es6.es6';
 
@@ -136,7 +137,7 @@ module.exports = function (content, file, conf) {
 
     // template
     if (output['template'].length) {
-        validateTemplate(output['template'][0].content).forEach(function (msg) {
+        validateTemplate(output['template'][0].content).forEach(function(msg) {
             console.log(msg)
         });
 
@@ -149,7 +150,7 @@ module.exports = function (content, file, conf) {
     }
 
     // style
-    output['style'].forEach(function (item, index) {
+    output['style'].forEach(function(item, index) {
         if (item.content) {
             var styleFileName = file.dirname + "/" + file.filename + '-vue-style-' + index + "." + item.lang;
 
@@ -162,6 +163,7 @@ module.exports = function (content, file, conf) {
             //用 fis 来 compile
             styleFile.cache = file.cache;
             styleFile.isCssLike = true;
+            styleFile.useMap = true;
             styleFile.isMod = true;
             fis.compile(styleFile);
 
@@ -174,13 +176,21 @@ module.exports = function (content, file, conf) {
                 'pkg': []
             };
 
-            var release = styleFile.release.substring(1);
+            var release = fis.compile.settings.domain ? styleFile.getUrl(fis.compile.settings.hash,  fis.compile.settings.domain) : styleFile.release.substring(1);
 
             if (seajs_config.exists()) {
                 //如果该文件存在
                 originalContent = seajs_config.getContent();
 
                 originalContent = originalContent.replace(/([\r\n])/g, '');
+
+                //主要是为了处理本地测试环境与本地推送本地时候，仍然是同一个 seajs-config 不清除会造成多余数据问题
+                if(fis.compile.settings.domain && originalContent.indexOf(fis.config.get('roadmap').domain) < 0){
+                    originalContent = '';
+                }else if(!fis.compile.settings.domain && originalContent.indexOf(fis.config.get('roadmap').domain) > 0){
+                    originalContent = '';
+                }
+
                 if (!(originalContent.indexOf(release) > -1)) {
 
                     let mapJson = originalContent.match(/(\{.*\})/g);
@@ -189,13 +199,13 @@ module.exports = function (content, file, conf) {
                     conf.map = isObject(mapJson) && mapJson.hasOwnProperty("map") && isArray(mapJson.map) ? mapJson.map : conf.map;
                     conf.map.push([styleFile.getId(), release]);
 
-                    fis.util.write(seajs_config.origin, 'seajs.config(' + JSON.stringify(conf, null, 4) + ');', 'utf-8');
+                    fis.util.write(seajs_config.origin, 'seajs.config(' + JSON.stringify(conf, null, fis.compile.optimize ? null : 4) + ');', 'utf-8');
                 }
             } else {
                 //不存在就生成一个
                 conf.map.push([styleFile.getId(), release]);
 
-                fis.util.write(seajs_config.origin, 'seajs.config(' + JSON.stringify(conf, null, 4) + ');', 'utf-8')
+                fis.util.write(seajs_config.origin, 'seajs.config(' + JSON.stringify(conf, null, fis.compile.optimize ? null : 4) + ');', 'utf-8')
             }
 
             //最后将style 文件依赖添加进去,删除生成的 style 文件
