@@ -182,7 +182,7 @@ module.exports = function(content, file, conf) {
                 //如果该文件存在
                 originalContent = seajs_config.getContent();
 
-                originalContent = originalContent.replace(/([\r\n])/g, '');
+                originalContent = originalContent.replace(/([\r\n\t])/g, '');
 
                 //主要是为了处理本地测试环境与本地推送本地时候，仍然是同一个 seajs-config 不清除会造成多余数据问题
                 if(fis.compile.settings.domain && originalContent.indexOf(fis.config.get('roadmap').domain) < 0){
@@ -191,8 +191,8 @@ module.exports = function(content, file, conf) {
                     originalContent = '';
                 }
 
-                if (!(originalContent.indexOf(release) > -1)) {
-
+                //已经有了的依赖就不要重复添加
+                if (originalContent.indexOf(styleFile.id) < 0) {
                     let mapJson = originalContent.match(/(\{.*\})/g);
                     mapJson = mapJson ? JSON.parse(mapJson[0]) : mapJson;
 
